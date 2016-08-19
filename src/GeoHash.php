@@ -62,15 +62,15 @@ class GeoHash
      * Get all 8 neighbor cells of a specific geohash
      *
      * @param $hash
-     * @param int $prec Precision of the geohash. Minimum 1, maximum 12.
      * @return array
      */
-    public static function expand($hash, $prec = 12)
+    public static function expand($hash)
     {
         list($minlng, $maxlng, $minlat, $maxlat) = self::decode($hash);
         $dlng = ($maxlng - $minlng) / 2;
         $dlat = ($maxlat - $minlat) / 2;
 
+        $prec = strlen($hash);
         return array(
             self::encode($minlng - $dlng, $maxlat + $dlat, $prec),
             self::encode($minlng + $dlng, $maxlat + $dlat, $prec),
