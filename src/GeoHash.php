@@ -8,20 +8,27 @@ class GeoHash
         0b10000, 0b01000, 0b00100, 0b00010, 0b00001
     );
 
-    public static function encode($lng, $lat, $prec = 0.00001)
+    /**
+     * Encode latitude and longitude to geohash
+     *
+     * @param $lng
+     * @param $lat
+     * @param int $prec Precision of the geohash. Minimum 1, maximum 12.
+     * @return string
+     */
+    public static function encode($lng, $lat, $prec = 12)
     {
         $minlng = -180;
         $maxlng = 180;
         $minlat = -90;
         $maxlat = 90;
 
-        $hash = array();
-        $error = 180;
+        $hash = '';
         $isEven = true;
         $chr = 0b00000;
         $b = 0;
 
-        while ($error >= $prec) {
+        while (strlen($hash) < $prec) {
             if ($isEven) {
                 $next = ($minlng + $maxlng) / 2;
                 if ($lng > $next) {
@@ -41,17 +48,14 @@ class GeoHash
             }
             $isEven = !$isEven;
 
-            if ($b < 4) {
-                $b++;
-            } else {
-                $hash[] = self::$table[$chr];
-                $error = max($maxlng - $minlng, $maxlat - $minlat);
+            if (++$b == 5) {
+                $hash .= self::$table[$chr];
                 $b = 0;
                 $chr = 0b00000;
             }
         }
 
-        return join('', $hash);
+        return $hash;
     }
 
     public static function expand($hash)
